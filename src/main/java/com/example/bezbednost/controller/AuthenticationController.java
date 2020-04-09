@@ -23,11 +23,11 @@ public class AuthenticationController {
 	private UserService userService;
 	
 	@PostMapping(value="/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> login(@RequestBody User user) {
+	public ResponseEntity login(@RequestBody User user) {
 		if (user.getEmail().contentEquals("admin@gmail.com") && user.getPassword().contentEquals("admin")) {
-			return new ResponseEntity<String>("OKAY", HttpStatus.OK);
+			return new ResponseEntity(HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Wrong email/password.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity(HttpStatus.FORBIDDEN);
 		}
 	}
 	
