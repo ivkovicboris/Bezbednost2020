@@ -1,4 +1,4 @@
-package com.example.keystore;
+package com.example.bezbednost.keystore;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

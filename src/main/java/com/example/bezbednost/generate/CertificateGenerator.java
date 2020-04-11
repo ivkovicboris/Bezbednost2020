@@ -1,14 +1,21 @@
 package com.example.bezbednost.generate;
 
 import java.math.BigInteger;
+import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -18,14 +25,19 @@ import com.example.bezbednost.data.SubjectData;
 
 
 public class CertificateGenerator {
+	
+	static {
+	    Security.addProvider(new BouncyCastleProvider());
+	}
+	
 	public CertificateGenerator() {}
 	
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) throws CertIOException {
 		try {
 			//Posto klasa za generisanje sertifiakta ne moze da primi direktno privatni kljuc pravi se builder za objekat
 			//Ovaj objekat sadrzi privatni kljuc izdavaoca sertifikata i koristiti se za potpisivanje sertifikata
 			//Parametar koji se prosledjuje je algoritam koji se koristi za potpisivanje sertifiakta
-			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
+			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA1WithRSAEncryption");
 			//Takodje se navodi koji provider se koristi, u ovom slucaju Bouncy Castle
 			builder = builder.setProvider("BC");
 
@@ -39,6 +51,13 @@ public class CertificateGenerator {
 					subjectData.getEndDate(),
 					subjectData.getX500name(),
 					subjectData.getPublicKey());
+			
+			ASN1Encodable[] subjectAlternativeNames = new ASN1Encodable[] {
+	    	        new GeneralName(GeneralName.dNSName, "localhost")
+		    };
+		    DERSequence subjectAlternativeNamesExtension = new DERSequence(subjectAlternativeNames);
+			certGen.addExtension(Extension.subjectAlternativeName, false, subjectAlternativeNamesExtension);
+			
 			//Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 
@@ -63,3 +82,4 @@ public class CertificateGenerator {
 		return null;
 	}
 }
+
