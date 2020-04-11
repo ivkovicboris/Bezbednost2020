@@ -1,4 +1,4 @@
-package com.example.keystore;
+package com.example.bezbednost.keystore;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,9 +23,16 @@ public class KeyStoreWriter {
 	public KeyStoreWriter() {
 		try {
 			keyStore = KeyStore.getInstance("JKS", "SUN");
+			keyStore.load(null, null);
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
