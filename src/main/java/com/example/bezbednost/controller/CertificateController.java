@@ -27,7 +27,7 @@ import com.example.bezbednost.model.CertificateOrganization;
 import com.example.bezbednost.model.CertificatePerson;
 import com.example.bezbednost.model.CertificateRoot;
 import com.example.bezbednost.service.CertificateDBService;
-
+import com.example.bezbednost.service.OCSPService;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -51,11 +51,13 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(value="/Certificate")
+@RequestMapping(value="/certificate")
 public class CertificateController {
 	
 	@Autowired
 	CertificateDBService service;
+	@Autowired
+	OCSPService oCSPservice;
 	
 	@PostMapping(value="/create", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> createCertificate (@RequestBody CertificateDTO cDTO) throws CertIOException{
@@ -152,15 +154,11 @@ public class CertificateController {
 				    SubjectData subjectData = new SubjectData(keyPairSubject.getPublic(), builder.build(), sn, startDate, endDate);
 				    //generateIssuerData
 				    KeyStoreReader keyStoreReader = new KeyStoreReader();
-				    if(service.findOne(cDTO.getNadSertifikatId()) == null) {
+				    Boolean b = oCSPservice.checkCertificateValidity(cDTO);
+				    if(b!=true) {
 				    	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				    }
 					CertificateDB cDB = service.findOne(cDTO.getNadSertifikatId());
-					if(!cDB.isAuthority() || cDB.isRevoked()) {
-						System.out.println("/n/n Nadsertifikat nema autoritet za izdavanje ili je povucen!!!/n/n");
-						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-					}
-					
 					String keyStoreIssuera = cDB.getNazivOrganizacije().concat(Long.toString(cDB.getId()));
 				    // Izvlacimo privatni kljuc nadsertifikata kojim cemo potpisati trazeni sertifikat
 				    IssuerData issuerData = keyStoreReader.readIssuerFromStore(keyStoreIssuera.concat(".jks"), Long.toString(cDB.getId()), "111".toCharArray(),  "111".toCharArray());
@@ -221,13 +219,11 @@ public class CertificateController {
 					
 				    //generateIssuerData
 				    KeyStoreReader keyStoreReader = new KeyStoreReader();
-				    if(service.findOne(cDTO.getNadSertifikatId()) == null) {
+				    Boolean b = oCSPservice.checkCertificateValidity(cDTO);
+				    if(b!=true) {
 				    	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				    }
 					CertificateDB cDB = service.findOne(cDTO.getNadSertifikatId());
-					if(!cDB.isAuthority() || cDB.isRevoked()) {
-						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-					}
 					String keyStoreIssuera = cDB.getNazivOrganizacije().concat(Long.toString(cDB.getId()));
 				    // Izvlacimo privatni kljuc nadsertifikata kojim cemo potpisati trazeni sertifikat
 				    IssuerData issuerData = keyStoreReader.readIssuerFromStore(keyStoreIssuera.concat(".jks"), Long.toString(cDB.getId()), "111".toCharArray(),  "111".toCharArray());
