@@ -1,6 +1,5 @@
 package com.example.bezbednost.service;
 
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -8,17 +7,21 @@ import java.util.Date;
 import javax.security.cert.X509Certificate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.bezbednost.dbModel.CertificateDB;
+import com.example.bezbednost.dto.CertificateDTO;
+import com.example.bezbednost.model.CertificateType;
 
 
 
+@Service
 public class OCSPService {
 	
 	@Autowired
 	CertificateDBService service;
 	
-	 private boolean checkDate(CertificateDB certificate, Date date){
+	 private boolean checkDate(CertificateDTO certificate, Date date){
 		 LocalDate date1 = LocalDate.now(); 
 		 if(certificate == null){
 	            return false;
@@ -30,13 +33,13 @@ public class OCSPService {
 			}
 	 }
 	 
-	 public Date convertToDateViaInstant(LocalDate dateToConvert) {
+	 private Date convertToDateViaInstant(LocalDate dateToConvert) {
 		    return java.util.Date.from(dateToConvert.atStartOfDay()
 		      .atZone(ZoneId.systemDefault())
 		      .toInstant());
 	}
 	 
-	 public String check(CertificateDB certificate, CertificateDB issuerCert) throws NullPointerException {
+	 public String check(CertificateDTO certificate) {
 	        if (certificate.isRevoked()){
 	            return "REVOKED";
 	        }
@@ -45,31 +48,30 @@ public class OCSPService {
 	        }
 	 }
 	 
-	 public Boolean checkCertificateValidity(CertificateDB certificate) throws NullPointerException {
+	 public Boolean checkCertificateValidity(CertificateDTO certificate) {
 		    CertificateDB parentCertificate = service.findOne(certificate.getNadSertifikatId());
+		    CertificateDTO parent = new CertificateDTO(parentCertificate);
 	        String certStatus;
-	        try {
-	            certStatus = check(certificate, parentCertificate);
-	        }catch (NullPointerException e){
-	            System.out.println("Sertifikati imaju NULL vrednost.");
-	            return false;
+	        if(check(certificate)==null) {
+	        	return false;
 	        }
+	        certStatus = check(parent);
 
 	        if (checkDate(certificate, certificate.getDatumIsteka())) {
 	                if (certStatus.equals("GOOD")) {
-	                    if(certificate.equals(parentCertificate)){
+	                    if(certificate.getTip()==CertificateType.ROOT){
 	                        // sertifikat je validan
 	                        return true;
 	                    }
 	                    else{
 	                        // ako nije root, proveravaj sad njega
-	                       checkCertificateValidity(parentCertificate);
+	                       return checkCertificateValidity(parent);
 	                    }
 	                }
 	        }
 
 	        return false;
-	    }
+	 }
 	 
 	 
 	        
