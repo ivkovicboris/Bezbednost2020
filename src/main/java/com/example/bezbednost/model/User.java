@@ -15,12 +15,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.bezbednost.dto.UserDTO;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 	private static final long serialVersionUID = 5304180350013858260L;
 
 	@Id
@@ -34,7 +36,18 @@ public class User {
 	@Column(name = "password", nullable = false, length = 80)
 	private String password;
 		
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "users_roles", joinColumns=@JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns=@JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private List<UserRole> roles;
 	
+	@Column(name = "name")
+	private String name;
+	
+	@Column(name = "surname")
+	private String surname;
+	
+	@Column(name = "phoneNumber")
+	private String phoneNumber;
 
 	public User() {
 		super();
@@ -45,13 +58,17 @@ public class User {
 		this.id = id;
 		this.email = email;
 		this.password = password;
-		
+		this.name = name;
+		this.surname = surname;
+		this.phoneNumber = phoneNumber;
 	}
 	
 	public User(UserDTO user) {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
-		
+		this.name = user.getName();
+		this.surname = user.getSurname();
+		this.phoneNumber = user.getPhoneNumber();
 	}
 
 	public Long getId() {
@@ -78,4 +95,76 @@ public class User {
 		this.password = password;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	@Override
+	public List<UserRole> getAuthorities() {
+		return roles;
+	}
+
+	@Override
+	public String getUsername() {
+		return email;
+	}
+
+	public List<UserRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<UserRole> roles) {
+		this.roles = roles;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+	
+	/*USERS
+	 * Admin
+	 * 	email: admin@gmail.com
+	 * 	pass: admin
+	 * Agent:
+	 * 	email: agent@gmail.com
+	 * 	pass: agent
+	 */
+
 }
+
