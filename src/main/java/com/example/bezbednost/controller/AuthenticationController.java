@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bezbednost.model.User;
 import com.example.bezbednost.security.CustomUserDetailsService;
 import com.example.bezbednost.security.TokenHelper;
 import com.example.bezbednost.service.UserService;
+import com.google.gson.Gson;
 
 @RestController
 @RequestMapping(value="/auth")
@@ -79,7 +79,8 @@ Logger logger = LoggerFactory.getLogger(this.getClass());
 
 		// Vrati token kao odgovor na uspesno autentifikaciju
 		logger.info("UL-K: {}, SE_EVENT", user.getEmail());
-		return new ResponseEntity<String>(jws, HttpStatus.OK);
+		Gson g = new Gson();
+		return new ResponseEntity<String>(g.toJson(jws) , HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('USER')")
