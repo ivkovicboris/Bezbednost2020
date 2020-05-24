@@ -13,3 +13,4 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedMethods("*");
     }
 }
+

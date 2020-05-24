@@ -30,6 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+  
 
     @Autowired
     private CustomUserDetailsService jwtUserDetailsService;
@@ -66,7 +68,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 	//svaki zahtev mora biti autorizovan
                 	.anyRequest().authenticated().and()
                 //presretni svaki zahtev filterom
-                .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), BasicAuthenticationFilter.class);
+                .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), BasicAuthenticationFilter.class).cors();
+        
+        http .requiresChannel()
+        .anyRequest()
+        .requiresSecure();
+                
         http.csrf().disable();
     }
 
@@ -90,6 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 
             );
     }
+    
     
     
 
