@@ -72,7 +72,7 @@ Logger logger = LoggerFactory.getLogger(this.getClass());
 		return new ResponseEntity<>(servicesDTO, HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('USER')")
+//	@PreAuthorize("hasRole('USER')")
 	@PostMapping(value="/create")
 	public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
 		User user = new User(userDTO);

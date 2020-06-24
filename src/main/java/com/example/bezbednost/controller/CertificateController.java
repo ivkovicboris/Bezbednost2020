@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,10 +47,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-
-
-
 @RestController
 @RequestMapping(value="/certificate")
 public class CertificateController {
@@ -59,6 +56,7 @@ public class CertificateController {
 	@Autowired
 	OCSPService oCSPservice;
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value="/create", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> createCertificate (@RequestBody CertificateDTO cDTO) throws CertIOException{
 		KeyStoreWriter keyStore = new KeyStoreWriter();
@@ -267,6 +265,7 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value="/revoke/{id}")
 	public ResponseEntity<CertificateDTO> revoke(@PathVariable long id){
 		CertificateDB cDB = service.findOne(id);
@@ -296,6 +295,7 @@ public class CertificateController {
         return null;
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping(value="/getAll")
 	public ResponseEntity<List<CertificateDTO>> findAll(){
 		List<CertificateDB> certificates = service.findAll();
