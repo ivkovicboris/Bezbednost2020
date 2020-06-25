@@ -1,11 +1,7 @@
 package com.example.bezbednost.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -21,7 +17,9 @@ public class UserRole implements GrantedAuthority {
 	
 	@Column(name = "name")
 	private String name;
+
 	
+
 	public UserRole() {
 		
 	}

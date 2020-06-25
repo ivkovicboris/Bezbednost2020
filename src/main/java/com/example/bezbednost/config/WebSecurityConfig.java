@@ -57,6 +57,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+//        		.authorizeRequests()
+//            	.antMatchers("/certificate/getAll").hasAuthority("ROLE_ADMIN")
+
+//        		.antMatchers("/protectedbyrole").hasRole("USER")
+//        	    .antMatchers("/protectedbyauthority").hasAuthority("READ_PRIVILEGE")
+//        		.and()
         		//komunikacija izmedju klijenta i servera je stateless
                 .sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS ).and()
                 //za neautorizovane zahteve posalji 401 gresku
@@ -65,6 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 	//svim korisnicima dopusti da pristupe putanjama /auth/login
                 	.antMatchers("/auth/login").permitAll()
                 	.antMatchers("/User/create").permitAll()
+
                 	//svaki zahtev mora biti autorizovan
                 	.anyRequest().authenticated().and()
                 //presretni svaki zahtev filterom

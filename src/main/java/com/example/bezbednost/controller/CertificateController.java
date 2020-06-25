@@ -295,7 +295,7 @@ public class CertificateController {
         return null;
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping(value="/getAll")
 	public ResponseEntity<List<CertificateDTO>> findAll(){
 		List<CertificateDB> certificates = service.findAll();

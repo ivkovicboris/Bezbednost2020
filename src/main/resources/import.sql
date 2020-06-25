@@ -10,3 +10,12 @@ insert into users_roles(user_id, role_id) values (1, 2);
 
 insert into users_roles(user_id, role_id) values (2, 2);
 
+insert into permission (id, name) values (1, 'CREATE_CERTIFICATE');
+insert into permission (id, name) values (2, 'READ_CERTIFICATE');
+insert into permission (id, name) values (3, 'DELETE_CERTIFICATE');
+					
+
+insert into authorities_permissions (permission_id, user_roles_id) values (1, 1);
+insert into authorities_permissions (permission_id, user_roles_id) values (2, 1);
+insert into authorities_permissions (permission_id, user_roles_id) values (3, 1);
+
