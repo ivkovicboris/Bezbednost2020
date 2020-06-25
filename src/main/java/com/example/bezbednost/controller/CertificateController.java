@@ -5,6 +5,8 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.CertIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,6 +52,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value="/certificate")
 public class CertificateController {
+	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	CertificateDBService service;
@@ -114,17 +118,23 @@ public class CertificateController {
 				    
 				    keyStore.write(cDB.getId().toString(), keyPairSubject.getPrivate(), "111".toCharArray(), cert);
 				    String nazivKeyStora = c.getNazivOrganizacije().concat(Long.toString(cDB.getId()));
-				    keyStore.saveKeyStore(nazivKeyStora.concat(".jks"), "111".toCharArray()); 
+				    keyStore.saveKeyStore(nazivKeyStora.concat(".jks"), "111".toCharArray());
+				    logger.info("O-K: {}, NP_EVENT",cDB.getId());
 				    
 				}catch(CertificateException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (InvalidKeyException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchAlgorithmException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchProviderException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (SignatureException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				}
 				
@@ -154,6 +164,7 @@ public class CertificateController {
 				    KeyStoreReader keyStoreReader = new KeyStoreReader();
 				    Boolean b = oCSPservice.checkCertificateValidity(cDTO);
 				    if(b!=true) {
+				    	logger.error("PK, SE_EVENT");
 				    	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				    }
 					CertificateDB cDB = service.findOne(cDTO.getNadSertifikatId());
@@ -182,16 +193,22 @@ public class CertificateController {
 				    keyStore.saveKeyStore(nazivKeyStora.concat(".jks"), "111".toCharArray());
 				    
 				}catch(CertificateException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (InvalidKeyException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchAlgorithmException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchProviderException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (SignatureException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (InvalidKeySpecException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				}
 				
@@ -219,6 +236,7 @@ public class CertificateController {
 				    KeyStoreReader keyStoreReader = new KeyStoreReader();
 				    Boolean b = oCSPservice.checkCertificateValidity(cDTO);
 				    if(b!=true) {
+				    	logger.error("PK, SE_EVENT");
 				    	return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				    }
 					CertificateDB cDB = service.findOne(cDTO.getNadSertifikatId());
@@ -247,16 +265,22 @@ public class CertificateController {
 				    keyStore.saveKeyStore(nazivKeyStora.concat(".jks"), "111".toCharArray());
 				    
 				}catch(CertificateException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (InvalidKeyException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchAlgorithmException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (NoSuchProviderException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (SignatureException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				} catch (InvalidKeySpecException e) {
+					logger.error("PK, SE_EVENT");
 					e.printStackTrace();
 				}
 				break;
@@ -288,8 +312,10 @@ public class CertificateController {
 			keyGen.initialize(2048, random);
 			return keyGen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
+        	logger.error("PK, SE_EVENT");
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
+			logger.error("PK, SE_EVENT");
 			e.printStackTrace();
 		}
         return null;
@@ -310,7 +336,7 @@ public class CertificateController {
 				certificatesDTO.add(cDTO);
 			}
 			else {
-				
+				logger.error("PK, SE_EVENT");
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 			
