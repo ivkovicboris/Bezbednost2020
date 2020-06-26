@@ -60,7 +60,8 @@ public class CertificateController {
 	@Autowired
 	OCSPService oCSPservice;
 	
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping(value="/create", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> createCertificate (@RequestBody CertificateDTO cDTO) throws CertIOException{
 		KeyStoreWriter keyStore = new KeyStoreWriter();
@@ -289,7 +290,8 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping(value="/revoke/{id}")
 	public ResponseEntity<CertificateDTO> revoke(@PathVariable long id){
 		CertificateDB cDB = service.findOne(id);
